@@ -6,10 +6,12 @@ public class Movement : MonoBehaviour
     [SerializeField] public Rigidbody capsuleRigidBody;
     [SerializeField] public Collider capsuleCollider;
     [SerializeField] public float capsuleSpeed;
-    [SerializeField] public float distToGround, jumpSpeed,jumpGain,doubleInputCD, doubleJumpCD,dashSpeed, dashGain;
+    [SerializeField] public float distToGround, jumpSpeed,jumpGain,doubleInputCD, doubleJumpCD,dashSpeed, dashGain,gravityGain, frictionGain;
     [SerializeField] private CinemachineCamera freeLookCamera;
+    [SerializeField] private CheckGround checker;
     private float defaultspeed;
     private int jumpCharges = 1;
+    private bool isGrounded;
     
     void Start()
     {
@@ -21,10 +23,18 @@ public class Movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        isGrounded = checker.isOnground;
+        if (isGrounded)
+        {
+            capsuleCollider.material.dynamicFriction = frictionGain;
+        }
+        else {
+            capsuleCollider.material.dynamicFriction = 0.1f*frictionGain;
+        }
             transform.forward = freeLookCamera.transform.forward;
             transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
        
-        capsuleSpeed = isGrounded()? defaultspeed :  defaultspeed/20;
+        capsuleSpeed = isGrounded? defaultspeed :  defaultspeed/20;
         doubleInputCD = Mathf.Max(0f, doubleInputCD - Time.deltaTime);
         doubleJumpCD = Mathf.Max(0f, doubleJumpCD - Time.deltaTime);
         Vector2 inputVector = Vector2.zero; // intialize our input vector
@@ -49,7 +59,7 @@ public class Movement : MonoBehaviour
              {
              inputVector += Vector2.left;
              }
-        if (Input.GetKey(KeyCode.Space)&& isGrounded() && doubleInputCD <=0)
+        if (Input.GetKey(KeyCode.Space)&& isGrounded && doubleInputCD <=0)
         {
             jumpSpeed = 1;
             doubleInputCD = 0.05f;
@@ -57,7 +67,7 @@ public class Movement : MonoBehaviour
             jumpCharges = 1;
         }
 
-        if (Input.GetKey(KeyCode.Space) && !isGrounded() && doubleInputCD <= 0 && doubleJumpCD <=0 && jumpCharges>0)
+        if (Input.GetKey(KeyCode.Space) && !isGrounded && doubleInputCD <= 0 && doubleJumpCD <=0 && jumpCharges>0)
         {
             jumpSpeed = 1.25f;
             doubleInputCD = 0.05f;
@@ -77,10 +87,12 @@ public class Movement : MonoBehaviour
         capsuleRigidBody.AddForce(0, jumpSpeed*jumpGain, 0,ForceMode.VelocityChange);
         capsuleRigidBody.AddRelativeForce(0,0,dashSpeed*dashGain, ForceMode.Impulse);
     }
-
-    bool isGrounded() {
-        return Physics.Raycast(transform.position, -Vector3.up, distToGround + 0.05f);
+    public void FixedUpdate()
+    {
+        GetComponent<Rigidbody>().AddForce(Physics.gravity*gravityGain, ForceMode.Acceleration);
     }
+
+  
  
         
     
