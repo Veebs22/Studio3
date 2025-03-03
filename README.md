@@ -1,4 +1,4 @@
-wasd to move
-shift to dash (airborn only)
-space to jump
-space (in air) to double jump
+wasd to move \n
+shift to dash (airborn only) \n
+space to jump \n
+space (in air) to double jump \n
