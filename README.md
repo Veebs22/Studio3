@@ -1,4 +1,13 @@
-wasd to move \n
-shift to dash (airborn only) \n
-space to jump \n
-space (in air) to double jump \n
+<h1>Controls:
+<h2>
+- wasd to move <br>
+- Lshift to dash (airborn only)  <br>
+- space to jump  <br>
+- space (in air) to double jump  <br>
+</h2>
+<hr>
+<h1>
+  video:
+</h1>
+
+
